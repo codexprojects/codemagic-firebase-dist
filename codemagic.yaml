@@ -1,7 +1,41 @@
 workflows:
-    sample-workflow:
-        name: Codemagic Sample Workflow
-        max_build_duration: 120
-        instance_type: mac_mini_m1
-    ios-workflow:
-        name: iOS Sample Workflow
+  ios-workflow:
+    name: iOS Workflow
+    environment:
+      vars:
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      groups:
+        - firebase_credentials
+    scripts:
+      - name: Set up firebase install
+        script: |
+          echo "install bundler"
+          gem install bundler
+          sudo gem install fastlane-plugin-firebase_app_distribution --user-install
+      - name: Execute fastlane ios publishing task
+        script: |
+          echo "execute fastlane install"
+          cd ios
+          bundle install
+          bundle exec fastlane firebase
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - yucel.ilke@gmail.com
+        notify:
+          success: true
+          failure: false
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        ios:
+          app_id: 1:364593885285:ios:58c4a463b7152396b5568c
+          groups:
+            - iosTesters
