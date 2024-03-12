@@ -1,0 +1,6 @@
+{
+    "yaml.schemaStore.enable": false,
+    "yaml.schemas": {
+        "codemagicschema://schema/codemagic": "file:///Users/ilkeyucel/Developer/Interviews/Codemagic/codemagic-firebase-dist/codemagic.yaml"
+    }
+}

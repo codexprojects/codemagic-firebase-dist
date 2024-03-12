@@ -9,21 +9,21 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      ruby: latest
       groups:
         - firebase_credentials
     scripts:
-      - name: Set up firebase install
+      - name: Get Flutter packages
         script: |
-          echo "install bundler"
-          gem install bundler
-          sudo gem install fastlane-plugin-firebase_app_distribution --user-install
-      - name: Execute fastlane ios publishing task
+          echo "get flutter packages"
+          flutter packages pub get
+      - name: Install pods
         script: |
-          echo "execute fastlane install"
-          cd ios
-          bundle install
-          bundle exec fastlane firebase
+          echo "install pods"
+          find . -name "Podfile" -execdir pod install \;
+      - name: Flutter Analyze
+        script: |
+          echo "flutter analyze"
+          flutter analyze
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
