@@ -6,18 +6,31 @@ workflows:
       vars:
         XCODE_WORKSPACE: "Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
+        BUNDLE_ID: "com.example.codemagicIlke"
       flutter: stable
       xcode: latest
       cocoapods: default
       groups:
         - firebase_credentials
     scripts:
+    - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
+      script: | 
+        keychain initialize
+    - name: Fetch signing files
+      script: | 
+        app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create
+    - name: Use system default keychain
+      script: | 
+        keychain add-certificates
     - name: Set up code signing settings on Xcode project
       script: | 
         xcode-project use-profiles
     - name: Get Flutter packages
       script: | 
         flutter packages pub get
+    - name: Flutter analyze
+      script: | 
+        flutter analyze
     - name: Install pods
       script: | 
         find . -name "Podfile" -execdir pod install \;
@@ -25,6 +38,16 @@ workflows:
       script: | 
         flutter build ipa --release \
           --build-name=1.0.0 \
+          --export-options-plist=/Users/builder/export_options.plist
+    - name: Install firebase app distribution
+      script: | 
+        gem install bundle
+        sudo gem install fastlane-plugin-firebase_app_distribution --user-install
+    - name: Flutter build ipa and automatic versioning
+      script: | 
+        flutter build ipa --release \
+          --build-name=1.0.0 \
+          --build-number=$BUILD_NUMBER \
           --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
