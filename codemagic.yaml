@@ -2,12 +2,14 @@ workflows:
   ios-workflow:
     name: iOS Workflow
     environment:
+      instance_type: mac_pro
       vars:
         XCODE_WORKSPACE: "Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
       flutter: stable
       xcode: latest
       cocoapods: default
+      ruby: latest
       groups:
         - firebase_credentials
     scripts:
@@ -15,7 +17,6 @@ workflows:
         script: |
           echo "install bundler"
           gem install bundler
-          sudo gem uninstall fastlane-plugin-firebase_app_distribution
           sudo gem install fastlane-plugin-firebase_app_distribution --user-install
       - name: Execute fastlane ios publishing task
         script: |
