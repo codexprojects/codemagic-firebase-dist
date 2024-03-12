@@ -1,8 +1,8 @@
 workflows:
   ios-workflow:
     name: iOS Workflow
+    instance_type: mac_pro
     environment:
-      instance_type: mac_pro
       vars:
         XCODE_WORKSPACE: "Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
